@@ -256,7 +256,7 @@ font-size:38px;
 </select>
 
 <label>Blur</label>
-<input type="range" id="blur" min="0" max="10" value="1">
+<input type="range" id="blur" min="0" max="3" value="1">
 
 <label>Brightness</label>
 <input type="range" id="brightness" min="50" max="150" value="90">
@@ -320,7 +320,45 @@ const file = e.target.files[0]
 
 if(file){
 
-preview.src = URL.createObjectURL(file)
+const reader = new FileReader()
+
+reader.onload = function(event){
+
+const img = new Image()
+
+img.onload = function(){
+
+const canvas = document.createElement('canvas')
+
+const ctx = canvas.getContext('2d')
+
+const maxWidth = 1200
+
+const scale =
+maxWidth / img.width
+
+canvas.width = maxWidth
+canvas.height =
+img.height * scale
+
+ctx.drawImage(
+img,
+0,
+0,
+canvas.width,
+canvas.height
+)
+
+preview.src =
+canvas.toDataURL('image/jpeg',0.8)
+
+}
+
+img.src = event.target.result
+
+}
+
+reader.readAsDataURL(file)
 
 }
 
