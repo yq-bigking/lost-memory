@@ -366,11 +366,46 @@ updateFilter()
 
 function downloadImage(){
 
+const canvas = document.createElement('canvas')
+const ctx = canvas.getContext('2d')
+
+const img = preview
+
+canvas.width = img.naturalWidth
+canvas.height = img.naturalHeight
+
+let filter = `
+blur(${blur.value}px)
+brightness(${brightness.value}%)
+contrast(${contrast.value}%)
+saturate(${saturation.value}%)
+`
+
+if(preset.value === 'dream'){
+filter += ' hue-rotate(-10deg)'
+}
+
+if(preset.value === 'vhs'){
+filter += ' sepia(10%)'
+}
+
+if(preset.value === 'ccd'){
+filter += ' saturate(120%) contrast(85%)'
+}
+
+if(preset.value === 'emo'){
+filter += ' grayscale(30%)'
+}
+
+ctx.filter = filter
+
+ctx.drawImage(img,0,0)
+
 const link = document.createElement('a')
 
-link.href = preview.src
-
 link.download = 'lost_memory.png'
+
+link.href = canvas.toDataURL('image/png')
 
 link.click()
 
