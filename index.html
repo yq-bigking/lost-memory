@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>lost_memory.exe</title>
 
@@ -15,86 +15,132 @@ box-sizing:border-box;
 }
 
 body{
-background:#d7d2d7;
+background:#d7d0d7;
 font-family:Arial,sans-serif;
-color:white;
 overflow-x:hidden;
+color:white;
 min-height:100vh;
 }
 
-body::before{
-content:'';
+/* 雪花 */
+
+.snow{
 position:fixed;
 inset:0;
 pointer-events:none;
-opacity:.05;
-background-image:
-radial-gradient(circle,#fff 1px,transparent 1px);
-background-size:4px 4px;
-animation:noise .2s infinite;
+overflow:hidden;
+z-index:1;
 }
 
-@keyframes noise{
-0%{transform:translate(0)}
-25%{transform:translate(1px,-1px)}
-50%{transform:translate(-1px,1px)}
-75%{transform:translate(1px,1px)}
-100%{transform:translate(0)}
+.snow span{
+position:absolute;
+top:-10px;
+width:4px;
+height:4px;
+background:white;
+border-radius:50%;
+opacity:.7;
+animation:snowfall linear infinite;
 }
+
+@keyframes snowfall{
+to{
+transform:translateY(110vh);
+}
+}
+
+/* 顶部 */
 
 header{
-padding:26px;
+padding:24px;
 background:rgba(255,255,255,.08);
 backdrop-filter:blur(8px);
 border-bottom:1px solid rgba(255,255,255,.1);
+position:relative;
+z-index:2;
 }
 
 header h1{
-font-size:52px;
+font-size:46px;
 font-weight:200;
 letter-spacing:4px;
 }
 
 header p{
-margin-top:10px;
+margin-top:8px;
 opacity:.7;
 }
+
+/* 主体 */
 
 .container{
 display:flex;
 flex-wrap:wrap;
 gap:24px;
 padding:24px;
+position:relative;
+z-index:2;
 }
+
+/* 面板 */
 
 .panel{
 width:320px;
-background:rgba(255,255,255,.1);
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(12px);
 padding:24px;
 border-radius:28px;
-backdrop-filter:blur(10px);
-box-shadow:0 10px 40px rgba(0,0,0,.15);
 }
+
+.panel h2{
+margin-bottom:20px;
+font-weight:300;
+}
+
+input,
+select,
+button{
+width:100%;
+margin-top:14px;
+padding:14px;
+border:none;
+border-radius:18px;
+font-size:15px;
+}
+
+button{
+background:#f1dce4;
+}
+
+label{
+display:block;
+margin-top:18px;
+opacity:.7;
+font-size:14px;
+}
+
+/* 预览 */
 
 .preview{
 flex:1;
 min-height:80vh;
-background:rgba(0,0,0,.18);
 border-radius:32px;
+background:rgba(0,0,0,.2);
+position:relative;
+overflow:hidden;
 display:flex;
 justify-content:center;
 align-items:center;
-position:relative;
-overflow:hidden;
 }
 
 .preview img{
-max-width:90%;
+max-width:92%;
 max-height:85vh;
 border-radius:18px;
-transition:.3s;
-box-shadow:0 0 40px rgba(0,0,0,.35);
+box-shadow:0 0 50px rgba(0,0,0,.4);
 }
+
+/* VHS扫描线 */
 
 .scanlines{
 position:absolute;
@@ -104,64 +150,45 @@ background:
 linear-gradient(
 to bottom,
 transparent 50%,
-rgba(255,255,255,.03) 51%
+rgba(255,255,255,.04) 51%
 );
 background-size:100% 4px;
+mix-blend-mode:overlay;
 opacity:.25;
 }
 
-.topText{
+/* 文字 */
+
+.overlay-top{
 position:absolute;
-top:22px;
-left:22px;
+top:24px;
+left:24px;
 font-size:14px;
-letter-spacing:4px;
 opacity:.7;
+letter-spacing:3px;
 }
 
-.time{
+.overlay-time{
 position:absolute;
 bottom:24px;
 left:24px;
-font-size:14px;
+font-size:15px;
 line-height:1.8;
-opacity:.7;
+opacity:.75;
+letter-spacing:2px;
 }
 
-.quote{
+.overlay-quote{
 position:absolute;
 right:24px;
 bottom:24px;
-max-width:220px;
-font-size:18px;
+max-width:200px;
 line-height:1.6;
+font-size:17px;
 opacity:.7;
 }
 
-button,
-select,
-input[type=range]{
-
-width:100%;
-margin-top:14px;
-padding:14px;
-border:none;
-border-radius:18px;
-background:#f1dce5;
-font-size:15px;
-}
-
-input[type=file]{
-margin-top:16px;
-width:100%;
-}
-
-label{
-display:block;
-margin-top:16px;
-opacity:.8;
-font-size:14px;
-}
+/* 手机 */
 
 @media(max-width:900px){
 
@@ -178,7 +205,7 @@ min-height:60vh;
 }
 
 header h1{
-font-size:38px;
+font-size:34px;
 }
 
 }
@@ -188,9 +215,11 @@ font-size:38px;
 
 <body>
 
+<div class="snow" id="snow"></div>
+
 <header>
 <h1>lost_memory.exe</h1>
-<p>traumacore / dreamcore image generator</p>
+<p>traumacore / dreamcore editor</p>
 </header>
 
 <div class="container">
@@ -213,29 +242,25 @@ font-size:38px;
 <input type="range" id="blur" min="0" max="2" value="1">
 
 <label>Brightness</label>
-<input type="range" id="brightness" min="60" max="140" value="90">
+<input type="range" id="brightness" min="70" max="130" value="90">
 
 <label>Contrast</label>
-<input type="range" id="contrast" min="60" max="140" value="80">
+<input type="range" id="contrast" min="60" max="130" value="85">
 
 <label>Saturation</label>
-<input type="range" id="saturation" min="0" max="140" value="70">
+<input type="range" id="saturation" min="20" max="130" value="70">
 
 <button onclick="downloadImage()">
 Export PNG
 </button>
 
-<p style="margin-top:24px;opacity:.5;">
+<p style="margin-top:20px;opacity:.5;">
 everything feels far away.
 </p>
 
 </div>
 
 <div class="preview">
-
-<div class="topText">
-PLAY ▶ REC ●
-</div>
 
 <img
 id="previewImage"
@@ -244,12 +269,16 @@ src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1200&au
 
 <div class="scanlines"></div>
 
-<div class="time">
+<div class="overlay-top">
+PLAY ▶ REC ●
+</div>
+
+<div class="overlay-time">
 PM 11:47<br>
 MAR.15 2003
 </div>
 
-<div class="quote">
+<div class="overlay-quote">
 i can't remember anymore.
 </div>
 
@@ -268,6 +297,8 @@ const contrast = document.getElementById('contrast')
 const saturation = document.getElementById('saturation')
 const preset = document.getElementById('preset')
 
+/* 上传 */
+
 upload.addEventListener('change',(e)=>{
 
 const file = e.target.files[0]
@@ -278,35 +309,7 @@ const reader = new FileReader()
 
 reader.onload = function(event){
 
-const img = new Image()
-
-img.onload = function(){
-
-const canvas = document.createElement('canvas')
-const ctx = canvas.getContext('2d')
-
-const MAX = 1400
-
-let w = img.width
-let h = img.height
-
-if(w > MAX){
-
-h *= MAX / w
-w = MAX
-
-}
-
-canvas.width = w
-canvas.height = h
-
-ctx.drawImage(img,0,0,w,h)
-
-preview.src = canvas.toDataURL('image/jpeg',0.85)
-
-}
-
-img.src = event.target.result
+preview.src = event.target.result
 
 }
 
@@ -314,24 +317,26 @@ reader.readAsDataURL(file)
 
 })
 
+/* 滤镜 */
+
 function updateFilter(){
 
 let extra = ''
 
 if(preset.value === 'dream'){
-extra += ' hue-rotate(-8deg)'
+extra = ' hue-rotate(-10deg)'
 }
 
 if(preset.value === 'vhs'){
-extra += ' sepia(10%)'
+extra = ' sepia(18%)'
 }
 
 if(preset.value === 'ccd'){
-extra += ' saturate(120%) contrast(90%)'
+extra = ' saturate(120%) contrast(90%)'
 }
 
 if(preset.value === 'emo'){
-extra += ' grayscale(25%)'
+extra = ' grayscale(35%)'
 }
 
 preview.style.filter = `
@@ -352,164 +357,129 @@ preset.onchange = updateFilter
 
 updateFilter()
 
+/* 导出 */
+
 function downloadImage(){
 
 const canvas = document.createElement('canvas')
 const ctx = canvas.getContext('2d')
 
-const img = preview
+const img = new Image()
 
-const w = img.naturalWidth
-const h = img.naturalHeight
+img.crossOrigin = "anonymous"
 
-canvas.width = w
-canvas.height = h
+img.onload = function(){
+
+canvas.width = img.width
+canvas.height = img.height
 
 let filter = `
+blur(${blur.value}px)
 brightness(${brightness.value}%)
 contrast(${contrast.value}%)
 saturate(${saturation.value}%)
 `
 
-if(blur.value > 0){
-filter += ` blur(${Math.min(blur.value,2)}px)`
-}
-
 if(preset.value === 'dream'){
-filter += ' hue-rotate(-8deg)'
+filter += ' hue-rotate(-10deg)'
 }
 
 if(preset.value === 'vhs'){
-filter += ' sepia(10%)'
+filter += ' sepia(18%)'
 }
 
 if(preset.value === 'ccd'){
-filter += ' saturate(120%)'
+filter += ' saturate(120%) contrast(90%)'
 }
 
 if(preset.value === 'emo'){
-filter += ' grayscale(25%)'
+filter += ' grayscale(35%)'
 }
 
 ctx.filter = filter
 
-ctx.drawImage(img,0,0,w,h)
+ctx.drawImage(img,0,0)
 
+/* VHS噪点 */
 
-// VHS 偏移
-ctx.globalAlpha = .08
+for(let i=0;i<1200;i++){
 
-ctx.drawImage(
-img,
--3,
-2,
-w,
-h
-)
-
-ctx.globalAlpha = 1
-
-
-// 噪点
-for(let i=0;i<700;i++){
-
-const x = Math.random()*w
-const y = Math.random()*h
-
-const alpha = Math.random()*0.12
+const x = Math.random()*canvas.width
+const y = Math.random()*canvas.height
 
 ctx.fillStyle =
-`rgba(255,255,255,${alpha})`
+`rgba(255,255,255,${Math.random()*0.08})`
 
 ctx.fillRect(x,y,1,1)
 
 }
 
+/* traumacore文字 */
 
-// 暗角
-const gradient =
-ctx.createRadialGradient(
-w/2,
-h/2,
-w/4,
-w/2,
-h/2,
-w/1.2
-)
+ctx.fillStyle = 'rgba(255,255,255,.65)'
 
-gradient.addColorStop(0,'rgba(0,0,0,0)')
-gradient.addColorStop(1,'rgba(0,0,0,0.35)')
-
-ctx.fillStyle = gradient
-ctx.fillRect(0,0,w,h)
-
-
-// 时间文字
-ctx.font = '16px monospace'
-ctx.fillStyle = 'rgba(255,255,255,0.7)'
+ctx.font = '28px Arial'
 
 ctx.fillText(
-'PLAY ▶ REC ●',
-20,
-30
+'everything feels far away.',
+40,
+canvas.height - 60
 )
+
+ctx.font = '18px monospace'
 
 ctx.fillText(
-'PM 11:47',
-20,
-h-40
+'PM 11:47  MAR.15 2003',
+40,
+40
 )
+
+ctx.font = '20px Arial'
 
 ctx.fillText(
-'MAR.15 2003',
-20,
-h-20
+'Traumacore',
+canvas.width - 220,
+60
 )
 
+const link = document.createElement('a')
 
-// traumacore句子
-const quotes = [
+link.download = 'lost_memory.png'
 
-'everything feels far away',
-'please don't leave again',
-'i miss the old internet',
-'was any of it real?',
-'you forgot me already',
-'2007 felt warmer'
-
-]
-
-const q =
-quotes[Math.floor(Math.random()*quotes.length)]
-
-ctx.font = '22px Arial'
-
-ctx.fillStyle =
-'rgba(255,255,255,0.6)'
-
-ctx.fillText(
-q,
-w-320,
-h-50
-)
-
-
-// 导出
-const link =
-document.createElement('a')
-
-link.download =
-'lost_memory.png'
-
-link.href =
-canvas.toDataURL(
-'image/jpeg',
-0.92
-)
+link.href = canvas.toDataURL('image/png')
 
 link.click()
 
 }
+
+img.src = preview.src
+
+}
+
+/* 雪花 */
+
+function createSnow(){
+
+const snow = document.getElementById('snow')
+
+for(let i=0;i<40;i++){
+
+const s = document.createElement('span')
+
+s.style.left = Math.random()*100+'vw'
+
+s.style.animationDuration =
+(Math.random()*5+5)+'s'
+
+s.style.opacity = Math.random()
+
+snow.appendChild(s)
+
+}
+
+}
+
+createSnow()
 
 </script>
 
