@@ -409,103 +409,158 @@ const ctx = canvas.getContext('2d')
 
 const img = preview
 
-canvas.width = img.naturalWidth
-canvas.height = img.naturalHeight
+// 手机优化尺寸
+const MAX = 1400
 
+let w = img.naturalWidth
+let h = img.naturalHeight
+
+if(w > MAX){
+
+h *= MAX / w
+w = MAX
+
+}
+
+canvas.width = w
+canvas.height = h
+
+// 轻量滤镜
 let filter = `
-blur(${blur.value}px)
 brightness(${brightness.value}%)
 contrast(${contrast.value}%)
 saturate(${saturation.value}%)
 `
 
+if(blur.value > 0){
+
+filter += ` blur(${Math.min(blur.value,2)}px)`
+
+}
+
 if(preset.value === 'dream'){
-filter += ' hue-rotate(-10deg)'
+filter += ' hue-rotate(-8deg)'
 }
 
 if(preset.value === 'vhs'){
-filter += ' sepia(10%)'
+filter += ' sepia(8%)'
 }
 
 if(preset.value === 'ccd'){
-filter += ' saturate(120%) contrast(85%)'
+filter += ' saturate(115%)'
 }
 
 if(preset.value === 'emo'){
-filter += ' grayscale(30%)'
+filter += ' grayscale(20%)'
 }
 
 ctx.filter = filter
 
-ctx.shadowColor = 'rgba(255,0,80,0.25)'
-ctx.shadowBlur = 12
-  
-ctx.drawImage(img,0,0)
+ctx.drawImage(img,0,0,w,h)
 
-ctx.globalAlpha = 0.18
+
+// VHS偏移
+ctx.globalAlpha = 0.08
 
 ctx.drawImage(
 img,
--8,
-4,
-canvas.width,
-canvas.height
+-3,
+2,
+w,
+h
 )
 
 ctx.globalAlpha = 1
 
-for(let i=0;i<5000;i++){
 
-const x = Math.random()*canvas.width
-const y = Math.random()*canvas.height
+// 少量噪点（关键）
+for(let i=0;i<700;i++){
 
-const alpha = Math.random()*0.08
+const x = Math.random()*w
+const y = Math.random()*h
 
-ctx.fillStyle = "rgba(255,255,255,${alpha})"
+const alpha = Math.random()*0.12
+
+ctx.fillStyle = `rgba(255,255,255,${alpha})`
 
 ctx.fillRect(x,y,1,1)
 
 }
 
+
+// 暗角
+const gradient = ctx.createRadialGradient(
+w/2,
+h/2,
+w/4,
+w/2,
+h/2,
+w/1.2
+)
+
+gradient.addColorStop(0,'rgba(0,0,0,0)')
+gradient.addColorStop(1,'rgba(0,0,0,0.35)')
+
+ctx.fillStyle = gradient
+ctx.fillRect(0,0,w,h)
+
+
+// 时间戳
+ctx.font = '16px monospace'
+ctx.fillStyle = 'rgba(255,255,255,0.7)'
+
+ctx.fillText(
+'PLAY ▶ REC ●',
+20,
+30
+)
+
+ctx.fillText(
+'PM 11:47',
+20,
+h-40
+)
+
+ctx.fillText(
+'MAR.15 2003',
+20,
+h-20
+)
+
+
+// traumacore句子
 const quotes = [
 
-"everything feels far away",
-"please don't leave again",
-"i can't remember anymore",
-"was it always like this?",
-"2007 wasn't real",
-"do you still remember me?"
+'everything feels far away',
+'please don't leave again',
+'i miss the old internet',
+'was any of it real?',
+'you forgot me already',
+'2007 felt warmer'
 
 ]
 
 const q =
 quotes[Math.floor(Math.random()*quotes.length)]
 
-ctx.font = '28px Arial'
+ctx.font = '22px Arial'
 
-ctx.fillStyle = 'rgba(255,255,255,0.65)'
+ctx.fillStyle = `rgba(255,255,255,${alpha})`
 
 ctx.fillText(
 q,
-40,
-canvas.height - 60
+w-320,
+h-50
 )
 
-ctx.font = '18px monospace'
 
-ctx.fillStyle = 'rgba(255,255,255,0.5)'
-
-ctx.fillText(
-'PM 11:47  MAR.15 2003',
-40,
-40
-)
-
+// 导出
 const link = document.createElement('a')
 
 link.download = 'lost_memory.png'
 
-link.href = canvas.toDataURL('image/png')
+link.href =
+canvas.toDataURL('image/jpeg',0.92)
 
 link.click()
 
